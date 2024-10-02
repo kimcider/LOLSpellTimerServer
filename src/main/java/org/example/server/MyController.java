@@ -38,7 +38,8 @@ public class MyController {
     public void useFlash(@RequestBody String json) {
         try {
             Liner liner = mapper.readValue(json, Liner.class);
-            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
+//            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
+            linerList.get(liner.getName()).getFlash().setCoolTime(liner.getFlash().getCoolTime());
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
@@ -58,7 +59,7 @@ public class MyController {
     public void sendLinerStatus(@RequestBody String json) {
         try {
             Liner liner = mapper.readValue(json, Liner.class);
-            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
+            linerList.get(liner.getName()).getFlash().setCoolTime(liner.getFlash().getCoolTime());
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {

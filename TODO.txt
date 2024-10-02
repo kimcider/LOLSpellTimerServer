@@ -1,2 +1,5 @@
 DONE: Kotlin서버 테스트들 여기로 옮기기
-TODO: 각 파일들 테스트코드 작성
+DONE: 각 파일들 테스트코드 작성
+
+TODO: Flash의 On을 제거함에 따라 생기는 문제 해결
+    - 기존에 Flash가 클라에서 올 때, 300, true는 Flash가 On인거지만 이제는 Off인거다.

@@ -4,37 +4,37 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
-@JsonIgnoreProperties({"flashCoolTime"})
+@JsonIgnoreProperties({"flashCoolTime", "on"})
 @Getter
 @Setter
 public class Flash {
-    static int flashCoolTime = 300;
-    int coolTime = flashCoolTime; // 오타 수정: collTime -> coolTime
-    boolean on = true;
+    int flashCoolTime = 300;
+    int coolTime = 0;
 
     // 기본 생성자 필요
     public Flash() {
     }
 
+    public Flash(int coolTime) {
+        this.coolTime = coolTime;
+    }
+
+    public boolean isOn(){
+        return coolTime == 0;
+    }
     public void on() {
-        on = true;
+        coolTime = 0;
     }
 
     public void off() {
-        on = false;
-    }
-
-
-    public Flash(int coolTime, boolean on) {
-        this.coolTime = coolTime;
-        this.on = on;
+        coolTime = flashCoolTime;
     }
 
 
     @Override
     public boolean equals(Object obj) {
         Flash other = (Flash) obj;
-        if (on == other.on && coolTime == other.coolTime) {
+        if (coolTime == other.coolTime) {
             return true;
         }
         return false;
