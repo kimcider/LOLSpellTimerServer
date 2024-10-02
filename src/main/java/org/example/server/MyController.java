@@ -33,8 +33,29 @@ public class MyController {
         linerList.put("sup", new Liner("sup"));
     }
 
+    // 때가 되면 지우기
     @PostMapping("/useFlash")
     public void useFlash(@RequestBody String json) {
+        try {
+            Liner liner = mapper.readValue(json, Liner.class);
+            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
+
+            MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
+            myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
+                try {
+                    session.sendMessage(new TextMessage(getJsonLineList(linerList)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // useFlash와 완전히 같은 함수
+    @PostMapping("/sendLinerStatus")
+    public void sendLinerStatus(@RequestBody String json) {
         try {
             Liner liner = mapper.readValue(json, Liner.class);
             linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
