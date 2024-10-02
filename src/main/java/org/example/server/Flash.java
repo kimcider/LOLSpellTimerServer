@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
-@JsonIgnoreProperties({"flashCoolTime", "on"})
+@JsonIgnoreProperties({"on"})
 @Getter
 @Setter
 public class Flash {
@@ -34,7 +34,7 @@ public class Flash {
     @Override
     public boolean equals(Object obj) {
         Flash other = (Flash) obj;
-        if (coolTime == other.coolTime) {
+        if (flashCoolTime == other.flashCoolTime && isOn() == other.isOn()) {
             return true;
         }
         return false;

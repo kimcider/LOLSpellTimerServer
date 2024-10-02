@@ -64,7 +64,7 @@ public class LinerTest {
         String json = mapper.writeValueAsString(liner);
 
         assertEquals("""
-                {"name":"jg","flash":{"coolTime":0}}""", json);
+                {"name":"jg","flash":{"flashCoolTime":300,"coolTime":0}}""", json);
     }
 
     @Test

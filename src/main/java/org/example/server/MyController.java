@@ -58,8 +58,11 @@ public class MyController {
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
         try {
-            Liner liner = mapper.readValue(json, Liner.class);
-            linerList.get(liner.getName()).getFlash().setCoolTime(liner.getFlash().getCoolTime());
+            Liner clientLiner = mapper.readValue(json, Liner.class);
+            Liner serverLiner = linerList.get(clientLiner.getName());
+
+            serverLiner.getFlash().setCoolTime(clientLiner.getFlash().getCoolTime());
+            serverLiner.getFlash().setFlashCoolTime(clientLiner.getFlash().getFlashCoolTime());
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
