@@ -2,6 +2,7 @@ package org.example.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +16,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/")
+@Getter
 public class MyController {
     private Map<String, Liner> linerList = new HashMap<String, Liner>();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public String getJsonLineList() throws JsonProcessingException {
-        return mapper.writeValueAsString(linerList.values().stream().toList());
+    public String getJsonLineList(Map<String, Liner> list) throws JsonProcessingException {
+        return mapper.writeValueAsString(list.values().stream().toList());
     }
 
     public MyController() {
@@ -35,14 +37,12 @@ public class MyController {
     public void useFlash(@RequestBody String json) {
         try {
             Liner liner = mapper.readValue(json, Liner.class);
-            System.out.println(liner);
-            System.out.println(json);
-            linerList.get(liner.name).flash.on = liner.flash.on;
+            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
                 try {
-                    session.sendMessage(new TextMessage(getJsonLineList()));
+                    session.sendMessage(new TextMessage(getJsonLineList(linerList)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

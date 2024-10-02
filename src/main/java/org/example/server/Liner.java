@@ -1,8 +1,13 @@
 package org.example.server;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Liner {
-    String name;
-    Flash flash;
+    private String name;
+    private Flash flash;
 
     // 기본 생성자 필요
     public Liner() {
@@ -13,19 +18,12 @@ public class Liner {
         this.flash = new Flash(); // 기본값 설정
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Flash getFlash() {
-        return flash;
-    }
-
-    public void setFlash(Flash flash) {
-        this.flash = flash;
+    @Override
+    public boolean equals(Object obj) {
+        Liner other = (Liner) obj;
+        if (name.equals(other.name) && flash.equals(other.flash)) {
+            return true;
+        }
+        return false;
     }
 }
