@@ -1,4 +1,4 @@
-package org.example.server;
+package org.example.server.spell;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -32,6 +32,14 @@ public abstract class Spell {
             coolTime = spellCoolTime;
         }
     }
+
+    public void setSpell(Spell model) {
+        coolTime = model.getCoolTime();
+        spellCoolTime = model.getSpellCoolTime();
+        cosmicInsight = model.isCosmicInsight();
+        IonianBoots = model.isIonianBoots();
+    }
+
     @Override
     public boolean equals(Object obj) {
         Flash other = (Flash) obj;

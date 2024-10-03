@@ -153,6 +153,11 @@ public class LinerTest {
         assertNotEquals(l1, l2);
         l2.getFlash().off();
         assertEquals(l1, l2);
+
+        l1.getFlash().setSpellCoolTime(5);
+        assertNotEquals(l1, l2);
+        l2.getFlash().setSpellCoolTime(5);
+        assertEquals(l1, l2);
     }
 
 }
