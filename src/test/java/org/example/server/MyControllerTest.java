@@ -2,6 +2,7 @@ package org.example.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.server.spell.Flash;
+import org.example.server.spell.Spell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,8 +80,8 @@ public class MyControllerTest {
 
     @Test
     @DirtiesContext
-    void assertSendLinerStatusWillCallFourSetter() throws Exception {
-        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+    void assertSendLinerStatusWillCallSetSpell() throws Exception {
+        Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
@@ -103,10 +104,7 @@ public class MyControllerTest {
 
         verify(myController, times(1)).sendLinerStatus(any(String.class));
 
-        verify(mockServerLinerFlash, times(1)).setCoolTime(any(Integer.class));
-        verify(mockServerLinerFlash, times(1)).setSpellCoolTime(any(Integer.class));
-        verify(mockServerLinerFlash, times(1)).setCosmicInsight(any(Boolean.class));
-        verify(mockServerLinerFlash, times(1)).setIonianBoots(any(Boolean.class));
+        verify(mockServerLinerFlash, times(1)).setSpell(any(Spell.class));
     }
 
     @Test
@@ -140,7 +138,7 @@ public class MyControllerTest {
     @Test
     @DirtiesContext
     void testSendLinerStatusJGFlashOn1() throws Exception {
-        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
@@ -171,7 +169,7 @@ public class MyControllerTest {
     @Test
     @DirtiesContext
     void testSendLinerStatusJGFlashOnWithIonianBoots() throws Exception {
-        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
@@ -203,7 +201,7 @@ public class MyControllerTest {
     @Test
     @DirtiesContext
     void testSendLinerStatusJGFlashOnWithCosmicInsight() throws Exception {
-        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());

@@ -3,12 +3,13 @@ package org.example.server;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.server.spell.Flash;
+import org.example.server.spell.Spell;
 
 @Getter
 @Setter
 public class Liner {
     private String name;
-    private Flash flash;
+    private Spell flash;
 
     // 기본 생성자 필요
     public Liner() {
