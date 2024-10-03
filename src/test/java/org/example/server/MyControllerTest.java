@@ -1,7 +1,6 @@
 package org.example.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.example.server.spell.Flash;
 import org.example.server.spell.Spell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +72,7 @@ public class MyControllerTest {
     public void testGetJsonLineList() throws JsonProcessingException {
         assertEquals(
                 """
-                        [{"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"bot","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"mid","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"jg","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"sup","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}}]"""
+                        [{"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"bot","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"mid","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"jg","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"sup","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false}]"""
                 , myController.getJsonLineList(serverLinerList)
         );
     }
@@ -93,10 +92,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 0,
-                            "cosmicInsight": false,
-                            "ionianBoots": false
-                        }
+                            "coolTime": 0
+                        },
+                        "cosmicInsight": false,
+                        "ionianBoots": false
                     }
                 """)
                         .contentType("application/json")
@@ -120,10 +119,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 55,
-                            "cosmicInsight": false,
-                            "ionianBoots": false
-                        }
+                            "coolTime": 55
+                        },
+                        "cosmicInsight": false,
+                        "ionianBoots": false
                     }
                 """)
                         .contentType("application/json")
@@ -150,10 +149,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 0,
-                            "cosmicInsight": false,
-                            "ionianBoots": false
-                        }
+                            "coolTime": 0
+                        },
+                        "cosmicInsight": false,
+                        "ionianBoots": false
                     }
                 """)
                         .contentType("application/json")
@@ -181,10 +180,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 0,
-                            "cosmicInsight": true,
-                            "ionianBoots": false
-                        }
+                            "coolTime": 0
+                        },
+                        "cosmicInsight": true,
+                        "ionianBoots": false
                     }
                 """)
                         .contentType("application/json")
@@ -194,7 +193,7 @@ public class MyControllerTest {
 
         Liner resultLiner = new Liner("jg");
         assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
-        resultLiner.getFlash().setCosmicInsight(true);
+        resultLiner.setCosmicInsight(true);
         assertEquals(resultLiner, myController.getLinerList().get("jg"));
     }
 
@@ -213,10 +212,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 0,
-                            "cosmicInsight": false,
-                            "ionianBoots": true
-                        }
+                            "coolTime": 0
+                        },
+                        "cosmicInsight": false,
+                        "ionianBoots": true
                     }
                 """)
                         .contentType("application/json")
@@ -224,9 +223,12 @@ public class MyControllerTest {
 
         assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
 
+        assertFalse(myController.getLinerList().get("jg").isCosmicInsight());
+        assertTrue(myController.getLinerList().get("jg").isIonianBoots());
+
         Liner resultLiner = new Liner("jg");
         assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
-        resultLiner.getFlash().setIonianBoots(true);
+        resultLiner.setIonianBoots(true);
         assertEquals(resultLiner, myController.getLinerList().get("jg"));
     }
     @Test
@@ -243,10 +245,10 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 44,
-                            "cosmicInsight": false,
-                            "ionianBoots": true
-                        }
+                            "coolTime": 44
+                        },
+                        "cosmicInsight": false,
+                        "ionianBoots": true
                     }
                 """)
                         .contentType("application/json")
@@ -272,17 +274,17 @@ public class MyControllerTest {
                         "flash": {
                             "type":"flash",
                             "spellCoolTime": 300,
-                            "coolTime": 44,
-                            "cosmicInsight": true,
-                            "ionianBoots": true
-                        }
+                            "coolTime": 44
+                        },
+                        "cosmicInsight": true,
+                        "ionianBoots": true
                     }
                 """)
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
         assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
-        assertTrue(myController.getLinerList().get("jg").getFlash().isCosmicInsight());
-        assertTrue(myController.getLinerList().get("jg").getFlash().isIonianBoots());
+        assertTrue(myController.getLinerList().get("jg").isCosmicInsight());
+        assertTrue(myController.getLinerList().get("jg").isIonianBoots());
     }
 }

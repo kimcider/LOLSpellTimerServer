@@ -17,8 +17,6 @@ import lombok.Setter;
 public abstract class Spell {
     protected int spellCoolTime = 300;
     protected int coolTime = 0;
-    protected boolean cosmicInsight = false;
-    protected boolean IonianBoots = false;
 
     public boolean isOn(){
         return coolTime == 0;
@@ -36,14 +34,12 @@ public abstract class Spell {
     public void setSpell(Spell model) {
         coolTime = model.getCoolTime();
         spellCoolTime = model.getSpellCoolTime();
-        cosmicInsight = model.isCosmicInsight();
-        IonianBoots = model.isIonianBoots();
     }
 
     @Override
     public boolean equals(Object obj) {
         Flash other = (Flash) obj;
-        if (spellCoolTime == other.spellCoolTime && isOn() == other.isOn() && cosmicInsight == other.cosmicInsight && IonianBoots == other.IonianBoots) {
+        if (spellCoolTime == other.spellCoolTime && isOn() == other.isOn()) {
             return true;
         }
         return false;

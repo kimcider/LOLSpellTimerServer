@@ -39,7 +39,7 @@ public class MyController {
             Liner clientLiner = mapper.readValue(json, Liner.class);
             Liner serverLiner = linerList.get(clientLiner.getName());
 
-            serverLiner.getFlash().setSpell(clientLiner.getFlash());
+            serverLiner.setLiner(clientLiner);
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {

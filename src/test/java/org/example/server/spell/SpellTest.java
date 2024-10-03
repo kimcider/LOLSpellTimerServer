@@ -39,49 +39,17 @@ public class SpellTest {
 
         String json = mapper.writeValueAsString(spell);
         assertEquals("""
-                {"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}""", json);
+                {"type":"flash","spellCoolTime":300,"coolTime":0}""", json);
     }
     @Test
     public void jsonToSpellFlash() throws JsonProcessingException {
         String json = """
-                {"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}""";
+                {"type":"flash","spellCoolTime":300,"coolTime":0}""";
 
         Spell spell = mapper.readValue(json, new TypeReference<Spell>(){});
         assertEquals(new Flash(), spell);
     }
-    @Test
-    public void jsonToSpellFlashWithCosmicInsight() throws JsonProcessingException {
-        String json = """
-                {"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":true,"ionianBoots":false}""";
 
-        Spell spell = mapper.readValue(json, new TypeReference<Spell>(){});
-        Flash flash = new Flash();
-        flash.setCosmicInsight(true);
-        assertEquals(flash, spell);
-    }
-
-    @Test
-    public void jsonToSpellFlashWithIonianBoots() throws JsonProcessingException {
-        String json = """
-                {"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":true}""";
-
-        Spell spell = mapper.readValue(json, new TypeReference<Spell>(){});
-        Flash flash = new Flash();
-        flash.setIonianBoots(true);
-        assertEquals(flash, spell);
-    }
-
-    @Test
-    public void jsonToSpellFlashWithIonianBootsAndCosmicInsight() throws JsonProcessingException {
-        String json = """
-                {"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":true,"ionianBoots":true}""";
-
-        Spell spell = mapper.readValue(json, new TypeReference<Spell>(){});
-        Flash flash = new Flash();
-        flash.setIonianBoots(true);
-        flash.setCosmicInsight(true);
-        assertEquals(flash, spell);
-    }
 
     @Test
     public void setSpell_AssertSetSameSpellWillNotChangeSpell(){
@@ -112,23 +80,7 @@ public class SpellTest {
         assertEquals(50, spellTarget.getSpellCoolTime());
     }
 
-    @Test
-    public void setSpell_changeCosmicInsight(){
-        spellModel.setCosmicInsight(true);
 
-        spellTarget.setSpell(spellModel);
-
-        assertTrue(spellTarget.isCosmicInsight());
-    }
-
-    @Test
-    public void setSpell_changeIonianBoots(){
-        spellModel.setIonianBoots(true);
-
-        spellTarget.setSpell(spellModel);
-
-        assertTrue(spellTarget.isIonianBoots());
-    }
 
     @Test
     public void setSpell_SpyFunctionCall(){
@@ -140,8 +92,6 @@ public class SpellTest {
         verify(mockSpellTarget, times(1)).setSpell(mockSpellModel);
         verify(mockSpellModel, times(1)).getCoolTime();
         verify(mockSpellModel, times(1)).getSpellCoolTime();
-        verify(mockSpellModel, times(1)).isCosmicInsight();
-        verify(mockSpellModel, times(1)).isIonianBoots();
     }
 
 
