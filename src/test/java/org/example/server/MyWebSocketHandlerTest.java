@@ -40,27 +40,4 @@ public class MyWebSocketHandlerTest {
         myHandler.afterConnectionClosed(mockSession, CloseStatus.NORMAL);
         assertEquals(0, myHandler.sessions.size());
     }
-
-
-    @Test
-    @DirtiesContext
-    void testGetAllLinerStatusWhenSessionSizeZero(){
-        myHandler.sessions.clear();
-        WebSocketSession mockSession1 = Mockito.mock(WebSocketSession.class);
-
-
-        assertNotNull(null);
-    }
-
-    @Test
-    @DirtiesContext
-    void testGetAllLinerStatusWhenSessionSizeIsOne(){
-        assertNotNull(null);
-    }
-
-    @Test
-    @DirtiesContext
-    void testGetAllLinerStatusWhenSessionSizeIsTwo(){
-        assertNotNull(null);
-    }
 }

@@ -7,9 +7,7 @@ import lombok.Setter;
 @JsonIgnoreProperties({"on"})
 @Getter
 @Setter
-public class Flash {
-    int flashCoolTime = 300;
-    int coolTime = 0;
+public class Flash extends Spell{
 
     // 기본 생성자 필요
     public Flash() {
@@ -19,24 +17,4 @@ public class Flash {
         this.coolTime = coolTime;
     }
 
-    public boolean isOn(){
-        return coolTime == 0;
-    }
-    public void on() {
-        coolTime = 0;
-    }
-
-    public void off() {
-        coolTime = flashCoolTime;
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-        Flash other = (Flash) obj;
-        if (flashCoolTime == other.flashCoolTime && isOn() == other.isOn()) {
-            return true;
-        }
-        return false;
-    }
 }

@@ -64,28 +64,76 @@ public class LinerTest {
         String json = mapper.writeValueAsString(liner);
 
         assertEquals("""
-                {"name":"jg","flash":{"flashCoolTime":300,"coolTime":0}}""", json);
+                {"name":"jg","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}}""", json);
     }
 
     @Test
     @DirtiesContext
-    public void testJsonToLinerList() throws JsonProcessingException {
+    public void testJsonToLinerListWithCoolTime() throws JsonProcessingException {
         myController.getLinerList().get("jg").getFlash().off();
         myController.getLinerList().get("mid").getFlash().off();
         myController.getLinerList().get("sup").getFlash().setCoolTime(100);
 
         String json = """
-                  [{"name":"top","flash":{"coolTime":0}},
-                  {"name":"jg","flash":{"coolTime":300}},
-                  {"name":"mid","flash":{"coolTime":300}},
-                  {"name":"bot","flash":{"coolTime":0}},
-                  {"name":"sup","flash":{"coolTime":100}}]""";
+                  [{"name":"top","flash":{"type":"flash", "coolTime":0}},
+                  {"name":"jg","flash":{"type":"flash", "coolTime":300}},
+                  {"name":"mid","flash":{"type":"flash", "coolTime":300}},
+                  {"name":"bot","flash":{"type":"flash", "coolTime":0}},
+                  {"name":"sup","flash":{"type":"flash", "coolTime":100}}]""";
 
         List<Liner> liners = mapper.readValue(json, new TypeReference<List<Liner>>() {});
         for(Liner liner : liners){
             assertEquals(liner, myController.getLinerList().get(liner.getName()));
         }
 
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void testJsonToLinerListWithCosmicInsightsAndIonianBoots() throws JsonProcessingException {
+        myController.getLinerList().get("jg").getFlash().setCosmicInsight(true);
+        myController.getLinerList().get("mid").getFlash().setIonianBoots(true);
+        myController.getLinerList().get("sup").getFlash().setCosmicInsight(true);
+        myController.getLinerList().get("sup").getFlash().setIonianBoots(true);
+
+        String json = """
+                  [{"name":"top","flash":{"type":"flash", "coolTime":0, "cosmicInsight":false, "ionianBoots":false}},
+                  {"name":"jg","flash":{"type":"flash", "coolTime":0, "cosmicInsight":true, "ionianBoots":false}},
+                  {"name":"mid","flash":{"type":"flash", "coolTime":0, "cosmicInsight":false, "ionianBoots":true}},
+                  {"name":"bot","flash":{"type":"flash", "coolTime":0, "cosmicInsight":false, "ionianBoots":false}},
+                  {"name":"sup","flash":{"type":"flash", "coolTime":0, "cosmicInsight":true, "ionianBoots":true}}]""";
+
+        List<Liner> liners = mapper.readValue(json, new TypeReference<List<Liner>>() {});
+        for(Liner liner : liners){
+            assertEquals(liner, myController.getLinerList().get(liner.getName()));
+        }
+
+    }
+
+    @Test
+    @DirtiesContext
+    public void testJsonToLinerListWithCoolTimeAndCosmicInsightsAndIonianBoots() throws JsonProcessingException{
+        myController.getLinerList().get("jg").getFlash().off();
+        myController.getLinerList().get("mid").getFlash().off();
+        myController.getLinerList().get("sup").getFlash().setCoolTime(100);
+
+        myController.getLinerList().get("jg").getFlash().setCosmicInsight(true);
+        myController.getLinerList().get("mid").getFlash().setIonianBoots(true);
+        myController.getLinerList().get("sup").getFlash().setCosmicInsight(true);
+        myController.getLinerList().get("sup").getFlash().setIonianBoots(true);
+
+        String json = """
+                  [{"name":"top","flash":{"type":"flash", "coolTime":0, "cosmicInsight":false, "ionianBoots":false}},
+                  {"name":"jg","flash":{"type":"flash", "coolTime":300, "cosmicInsight":true, "ionianBoots":false}},
+                  {"name":"mid","flash":{"type":"flash", "coolTime":300, "cosmicInsight":false, "ionianBoots":true}},
+                  {"name":"bot","flash":{"type":"flash", "coolTime":0, "cosmicInsight":false, "ionianBoots":false}},
+                  {"name":"sup","flash":{"type":"flash", "coolTime":100, "cosmicInsight":true, "ionianBoots":true}}]""";
+
+        List<Liner> liners = mapper.readValue(json, new TypeReference<List<Liner>>() {});
+        for(Liner liner : liners){
+            assertEquals(liner, myController.getLinerList().get(liner.getName()));
+        }
     }
 
     @Test

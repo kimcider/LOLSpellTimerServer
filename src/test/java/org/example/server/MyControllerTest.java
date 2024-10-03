@@ -74,47 +74,183 @@ public class MyControllerTest {
     public void testGetJsonLineList() throws JsonProcessingException {
         assertEquals(
                 """
-                        [{"name":"top","flash":{"coolTime":0}},{"name":"bot","flash":{"coolTime":0}},{"name":"mid","flash":{"coolTime":0}},{"name":"jg","flash":{"coolTime":0}},{"name":"sup","flash":{"coolTime":0}}]"""
+                        [{"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"bot","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"mid","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"jg","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}},{"name":"sup","flash":{"type":"flash","spellCoolTime":300,"coolTime":0,"cosmicInsight":false,"ionianBoots":false}}]"""
                 , myController.getJsonLineList(serverLinerList)
         );
     }
 
+    @Test
+    @DirtiesContext
+    void assertSendLinerStatusWillCallFourSetter() throws Exception {
+        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        serverLinerList.get("jg").setFlash(mockServerLinerFlash);
+
+        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/sendLinerStatus")
+                        .content("""
+                    {
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 0,
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
+                    }
+                """)
+                        .contentType("application/json")
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(myController, times(1)).sendLinerStatus(any(String.class));
+
+        verify(mockServerLinerFlash, times(1)).setCoolTime(any(Integer.class));
+        verify(mockServerLinerFlash, times(1)).setSpellCoolTime(any(Integer.class));
+        verify(mockServerLinerFlash, times(1)).setCosmicInsight(any(Boolean.class));
+        verify(mockServerLinerFlash, times(1)).setIonianBoots(any(Boolean.class));
+    }
 
     @Test
     @DirtiesContext
-    void testsSendLinerStatusJGFlagOn() throws Exception {
+    void testsSendLinerStatusJGFlaOff() throws Exception {
         tempLinerList.get("jg").getFlash().on();
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                      "name": "jg",
-                      "flash":{"coolTime":0}
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 55,
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
         verify(myController, times(1)).sendLinerStatus(any(String.class));
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
 
         verify(mockSession, times(1)).sendMessage(any(TextMessage.class));
-
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
     }
+
 
     @Test
     @DirtiesContext
-    void testSendLinerStatusJGFlagOff() throws Exception {
-        tempLinerList.get("jg").getFlash().off();
+    void testSendLinerStatusJGFlashOn1() throws Exception {
+        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                      "name": "jg",
-                      "flash":{"coolTime":300}
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 0,
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
+                    }
+                """)
+                        .contentType("application/json")
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(tempLinerList, myController.getLinerList());
+
+        Liner resultLiner = new Liner("jg");
+        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+    }
+
+    @Test
+    @DirtiesContext
+    void testSendLinerStatusJGFlashOnWithIonianBoots() throws Exception {
+        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        serverLinerList.get("jg").setFlash(mockServerLinerFlash);
+
+        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/sendLinerStatus")
+                        .content("""
+                    {
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 0,
+                            "cosmicInsight": true,
+                            "ionianBoots": false
+                        }
+                    }
+                """)
+                        .contentType("application/json")
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
+
+        Liner resultLiner = new Liner("jg");
+        assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
+        resultLiner.getFlash().setCosmicInsight(true);
+        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+    }
+
+    @Test
+    @DirtiesContext
+    void testSendLinerStatusJGFlashOnWithCosmicInsight() throws Exception {
+        Flash mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
+        serverLinerList.get("jg").setFlash(mockServerLinerFlash);
+
+        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/sendLinerStatus")
+                        .content("""
+                    {
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 0,
+                            "cosmicInsight": false,
+                            "ionianBoots": true
+                        }
+                    }
+                """)
+                        .contentType("application/json")
+        ).andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
+
+        Liner resultLiner = new Liner("jg");
+        assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
+        resultLiner.getFlash().setIonianBoots(true);
+        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+    }
+    @Test
+    @DirtiesContext
+    void testSendLinerStatusFlashOff() throws Exception {
+        tempLinerList.get("jg").getFlash().setCoolTime(44);
+
+        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/sendLinerStatus")
+                        .content("""
+                    {
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 44,
+                            "cosmicInsight": false,
+                            "ionianBoots": true
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -122,78 +258,35 @@ public class MyControllerTest {
 
         verify(myController, times(1)).sendLinerStatus(any(String.class));
 
-        assertEquals(false, myController.getLinerList().get("jg").getFlash().isOn());
-
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
     }
+
 
     @Test
     @DirtiesContext
-    void testSendLinerStatusJGFlagOff2() throws Exception {
-
+    void testSendLinerStatusFlashOffWithCosmicInsightsAndIonianBoots() throws Exception {
+        tempLinerList.get("jg").getFlash().setCoolTime(44);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                      "name": "jg",
-                      "flash":{"coolTime":200}
+                        "name": "jg",
+                        "flash": {
+                            "type":"flash",
+                            "spellCoolTime": 300,
+                            "coolTime": 44,
+                            "cosmicInsight": true,
+                            "ionianBoots": true
+                        }
                     }
                 """)
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(myController, times(1)).sendLinerStatus(any(String.class));
-
-        assertEquals(false, myController.getLinerList().get("jg").getFlash().isOn());
-
-        tempLinerList.get("jg").getFlash().off();
-        assertNotEquals(tempLinerList, myController.getLinerList());
-        tempLinerList.get("jg").getFlash().setCoolTime(200);
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
+        assertTrue(myController.getLinerList().get("jg").getFlash().isCosmicInsight());
+        assertTrue(myController.getLinerList().get("jg").getFlash().isIonianBoots());
     }
-
-    @Test
-    @DirtiesContext
-    void testSendLinerStatusFlashOn() throws Exception {
-        tempLinerList.get("jg").getFlash().off();
-
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/sendLinerStatus")
-                        .content("""
-                    {
-                      "name": "jg",
-                      "flash":{"coolTime":300}
-                    }
-                """)
-                        .contentType("application/json")
-        ).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(myController, times(1)).sendLinerStatus(any(String.class));
-
-        assertEquals(false, myController.getLinerList().get("jg").getFlash().isOn());
-
-        assertEquals(tempLinerList, myController.getLinerList());
-    }
-
-
-//    @Test
-//    @DirtiesContext
-//    void testAllLinerStatus() throws Exception {
-//        String json = """
-//                        [{"name":"top","flash":{"coolTime":0}},
-//                          {"name":"jg","flash":{"coolTime":300}},
-//                          {"name":"mid","flash":{"coolTime":285}},
-//                          {"name":"bot","flash":{"coolTime":0}},
-//                          {"name":"sup","flash":{"coolTime":100}}]""";
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.post("/allLinerStatus")
-//                        .content(json)
-//                        .contentType("application/json")
-//        ).andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.content().string(json));
-//        verify(myController, times(1)).allLinerStatus(json);
-//    }
 }

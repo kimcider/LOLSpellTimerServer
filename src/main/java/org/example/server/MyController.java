@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/")
 @Getter
 public class MyController {
-    private Map<String, Liner> linerList = new HashMap<String, Liner>();
+    private HashMap<String, Liner> linerList = new HashMap<String, Liner>();
     private ObjectMapper mapper = new ObjectMapper();
 
     public String getJsonLineList(Map<String, Liner> list) throws JsonProcessingException {
@@ -33,28 +33,6 @@ public class MyController {
         linerList.put("sup", new Liner("sup"));
     }
 
-    // 때가 되면 지우기
-    @PostMapping("/useFlash")
-    public void useFlash(@RequestBody String json) {
-        try {
-            Liner liner = mapper.readValue(json, Liner.class);
-//            linerList.get(liner.getName()).getFlash().setOn(liner.getFlash().isOn());
-            linerList.get(liner.getName()).getFlash().setCoolTime(liner.getFlash().getCoolTime());
-
-            MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
-            myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
-                try {
-                    session.sendMessage(new TextMessage(getJsonLineList(linerList)));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // useFlash와 완전히 같은 함수
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
         try {
@@ -62,7 +40,9 @@ public class MyController {
             Liner serverLiner = linerList.get(clientLiner.getName());
 
             serverLiner.getFlash().setCoolTime(clientLiner.getFlash().getCoolTime());
-            serverLiner.getFlash().setFlashCoolTime(clientLiner.getFlash().getFlashCoolTime());
+            serverLiner.getFlash().setSpellCoolTime(clientLiner.getFlash().getSpellCoolTime());
+            serverLiner.getFlash().setCosmicInsight(clientLiner.getFlash().isCosmicInsight());
+            serverLiner.getFlash().setIonianBoots(clientLiner.getFlash().isIonianBoots());
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
