@@ -72,7 +72,7 @@ public class MyControllerTest {
     public void testGetJsonLineList() throws JsonProcessingException {
         assertEquals(
                 """
-                        [{"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"bot","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"mid","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"jg","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"sup","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":false}]"""
+                        [{"name":"top","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"bot","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"mid","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"jg","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":false},{"name":"sup","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":false}]"""
                 , myController.getJsonLineList(serverLinerList)
         );
     }
@@ -248,7 +248,7 @@ public class MyControllerTest {
                             "coolTime": 44
                         },
                         "cosmicInsight": false,
-                        "ionianBoots": true
+                        "ionianBoots": false
                     }
                 """)
                         .contentType("application/json")
@@ -257,6 +257,7 @@ public class MyControllerTest {
         verify(myController, times(1)).sendLinerStatus(any(String.class));
 
         assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(tempLinerList, myController.getLinerList());
     }
 
 
@@ -264,6 +265,8 @@ public class MyControllerTest {
     @DirtiesContext
     void testSendLinerStatusFlashOffWithCosmicInsightsAndIonianBoots() throws Exception {
         tempLinerList.get("jg").getFlash().setCoolTime(44);
+        tempLinerList.get("jg").setCosmicInsight(true);
+        tempLinerList.get("jg").setIonianBoots(true);
 
         assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
         mockMvc.perform(
@@ -286,5 +289,6 @@ public class MyControllerTest {
         assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
         assertTrue(myController.getLinerList().get("jg").isCosmicInsight());
         assertTrue(myController.getLinerList().get("jg").isIonianBoots());
+        assertEquals(tempLinerList, myController.getLinerList());
     }
 }

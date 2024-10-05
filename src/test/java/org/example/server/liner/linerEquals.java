@@ -32,12 +32,6 @@ public class linerEquals {
     }
 
     @Test
-    public void DifferentSpellCoolTime(){
-        l1.getFlash().setSpellCoolTime(1);
-        assertNotEquals(l1, l2);
-    }
-
-    @Test
     public void DifferentCosmicInsight(){
         l1.setCosmicInsight(true);
         assertNotEquals(l1, l2);
@@ -50,7 +44,7 @@ public class linerEquals {
     }
 
     @Test
-    public void eualsReturnsFalseForNullObject(){
+    public void equalsReturnsFalseForNullObject(){
         l2 = null;
         assertFalse(l1.equals(l2));
     }

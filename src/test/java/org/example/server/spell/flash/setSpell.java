@@ -40,16 +40,6 @@ public class setSpell {
     }
 
     @Test
-    public void setSpell_changeSpellCollTime(){
-        spellModel.setSpellCoolTime(50);
-
-        spellTarget.setSpell(spellModel);
-
-        assertEquals(50, spellTarget.getSpellCoolTime());
-    }
-
-
-    @Test
     public void setSpell_SpyFunctionCall(){
         Spell mockSpellTarget = Mockito.spy(spellTarget);
         Spell mockSpellModel = Mockito.spy(spellModel);
@@ -58,6 +48,5 @@ public class setSpell {
 
         verify(mockSpellTarget, times(1)).setSpell(mockSpellModel);
         verify(mockSpellModel, times(1)).getCoolTime();
-        verify(mockSpellModel, times(1)).getSpellCoolTime();
     }
 }

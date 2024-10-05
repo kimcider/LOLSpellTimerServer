@@ -28,14 +28,6 @@ public class spellEquals {
     }
 
     @Test
-    public void SpellCoolTime(){
-        f1.setSpellCoolTime(1);
-        assertNotEquals(f1, f2);
-        f2.setSpellCoolTime(1);
-        assertEquals(f1, f2);
-    }
-
-    @Test
     public void IsOn() {
         f1.setCoolTime(0);
         f2.setCoolTime(0);
@@ -63,17 +55,6 @@ public class spellEquals {
         f1.setCoolTime(150);
         assertNotEquals(f1, f2);
         f2.setCoolTime(150);
-        assertEquals(f1, f2);
-    }
-
-    @Test
-    public void CoolTimeAndSpellCoolTime() {
-        f1.setCoolTime(15);
-        assertNotEquals(f1, f2);
-        f2.setCoolTime(15);
-        f1.setSpellCoolTime(150);
-        assertNotEquals(f1, f2);
-        f2.setSpellCoolTime(150);
         assertEquals(f1, f2);
     }
 }

@@ -39,12 +39,12 @@ public class SpellTest {
 
         String json = mapper.writeValueAsString(spell);
         assertEquals("""
-                {"type":"flash","spellCoolTime":300,"coolTime":0}""", json);
+                {"type":"flash","coolTime":0}""", json);
     }
     @Test
     public void jsonToSpellFlash() throws JsonProcessingException {
         String json = """
-                {"type":"flash","spellCoolTime":300,"coolTime":0}""";
+                {"type":"flash","coolTime":0}""";
 
         Spell spell = mapper.readValue(json, new TypeReference<Spell>(){});
         assertEquals(new Flash(), spell);
@@ -71,15 +71,6 @@ public class SpellTest {
         assertEquals(50, spellTarget.getCoolTime());
     }
 
-    @Test
-    public void setSpell_changeSpellCollTime(){
-        spellModel.setSpellCoolTime(50);
-
-        spellTarget.setSpell(spellModel);
-
-        assertEquals(50, spellTarget.getSpellCoolTime());
-    }
-
 
 
     @Test
@@ -91,7 +82,6 @@ public class SpellTest {
 
         verify(mockSpellTarget, times(1)).setSpell(mockSpellModel);
         verify(mockSpellModel, times(1)).getCoolTime();
-        verify(mockSpellModel, times(1)).getSpellCoolTime();
     }
 
 

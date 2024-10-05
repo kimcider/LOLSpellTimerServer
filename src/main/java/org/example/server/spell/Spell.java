@@ -15,8 +15,12 @@ import lombok.Setter;
 @Setter
 @JsonIgnoreProperties({"mapper"})
 public abstract class Spell {
-    protected int spellCoolTime = 300;
+    private final int spellCoolTime;
     protected int coolTime = 0;
+
+    public Spell(int spellCoolTime) {
+        this.spellCoolTime = spellCoolTime;
+    }
 
     public boolean isOn(){
         return coolTime == 0;
@@ -33,13 +37,12 @@ public abstract class Spell {
 
     public void setSpell(Spell model) {
         coolTime = model.getCoolTime();
-        spellCoolTime = model.getSpellCoolTime();
     }
 
     @Override
     public boolean equals(Object obj) {
         Flash other = (Flash) obj;
-        if (spellCoolTime == other.spellCoolTime && isOn() == other.isOn()) {
+        if (isOn() == other.isOn()) {
             return true;
         }
         return false;

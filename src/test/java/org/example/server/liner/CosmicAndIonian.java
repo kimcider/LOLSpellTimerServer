@@ -45,7 +45,7 @@ public class CosmicAndIonian {
     @Test
     public void jsonToLinerWithCosmicInsight() throws JsonProcessingException {
         String json = """
-                 {"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":true,"ionianBoots":false}""";
+                 {"name":"top","flash":{"type":"flash","coolTime":0},"cosmicInsight":true,"ionianBoots":false}""";
 
         Liner liner = mapper.readValue(json, new TypeReference<Liner>() {
         });
@@ -57,7 +57,7 @@ public class CosmicAndIonian {
     @Test
     public void jsonToLinerWithIonianBoots() throws JsonProcessingException {
         String json = """
-                 {"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":false,"ionianBoots":true}""";
+                 {"name":"top","flash":{"type":"flash","coolTime":0},"cosmicInsight":false,"ionianBoots":true}""";
 
         Liner liner = mapper.readValue(json, new TypeReference<Liner>() {
         });
@@ -69,7 +69,7 @@ public class CosmicAndIonian {
     @Test
     public void jsonToLinerWithIonianBootsAndCosmicInsight() throws JsonProcessingException {
         String json = """
-                 {"name":"top","flash":{"type":"flash","spellCoolTime":300,"coolTime":0},"cosmicInsight":true,"ionianBoots":true}""";
+                 {"name":"top","flash":{"type":"flash","coolTime":0},"cosmicInsight":true,"ionianBoots":true}""";
 
         Liner liner = mapper.readValue(json, new TypeReference<Liner>() {
         });
