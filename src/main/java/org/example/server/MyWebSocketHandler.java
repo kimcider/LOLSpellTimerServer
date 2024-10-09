@@ -24,7 +24,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     public HashMap<String, Set<WebSocketSession>> sessionMap = new HashMap<>();
-    public HashMap<WebSocketSession, String> sessionHashValue = new HashMap<>();
+    public HashMap<Integer, String> sessionHashValue = new HashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -34,7 +34,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String hashValue = message.getPayload();
-        sessionHashValue.put(session, hashValue);
+        sessionHashValue.put(session.hashCode(), hashValue);
 
         if(!sessionMap.containsKey(hashValue)){
             sessionMap.put(hashValue, new HashSet<>());
@@ -48,12 +48,14 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String hashValue = sessionHashValue.get(session);
+        String hashValue = sessionHashValue.get(session.hashCode());
         sessionMap.get(hashValue).remove(session);
 
         if(sessionMap.get(hashValue).isEmpty()){
             linerListMap.remove(hashValue);
         }
+
+        sessionHashValue.remove(session.hashCode());
     }
 
     public HashMap<String, Liner> getLinerList(){

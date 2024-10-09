@@ -24,10 +24,10 @@ public class MyController {
     public String getJsonLineList(Map<String, Liner> list) throws JsonProcessingException {
         return mapper.writeValueAsString(list.values().stream().toList());
     }
-    
+
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
-        System.out.println(json);
+        //System.out.println(json);
         try {
             JsonNode rootNode = mapper.readTree(json);
 
