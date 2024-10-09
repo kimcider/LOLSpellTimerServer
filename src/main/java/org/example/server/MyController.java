@@ -1,6 +1,7 @@
 package org.example.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,16 +34,24 @@ public class MyController {
         linerList.put("sup", new Liner("sup"));
     }
 
+
+
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
         try {
-            Liner clientLiner = mapper.readValue(json, Liner.class);
+            JsonNode rootNode = mapper.readTree(json);
+
+            String hash = rootNode.get("hash").asText();
+            JsonNode dataNode = rootNode.get("data");
+            String dataJson = mapper.writeValueAsString(dataNode);
+
+            Liner clientLiner = mapper.readValue(dataJson, Liner.class);
             Liner serverLiner = linerList.get(clientLiner.getName());
 
             serverLiner.setLiner(clientLiner);
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
-            myWebSocketHandler.sessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
+            myWebSocketHandler.sessionMap.get(hash).stream().filter(WebSocketSession::isOpen).forEach(session -> {
                 try {
                     session.sendMessage(new TextMessage(getJsonLineList(linerList)));
                 } catch (IOException e) {

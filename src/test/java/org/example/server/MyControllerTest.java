@@ -57,14 +57,15 @@ public class MyControllerTest {
         mockSession = Mockito.spy(WebSocketSession.class);
         when(mockSession.isOpen()).thenReturn(true);
         assertTrue(mockSession.isOpen());
-        myWebSocketHandler.afterConnectionEstablished(mockSession);
-        assertEquals(1, myWebSocketHandler.sessions.size());
+        myWebSocketHandler.handleTextMessage(mockSession, new TextMessage("hashValue"));
+        assertEquals("hashValue", myWebSocketHandler.sessionHashValue.get(mockSession));
+        assertEquals(1, myWebSocketHandler.sessionMap.get("hashValue").size());
     }
 
     @AfterEach
     public void closeConnection() throws IOException {
-        myWebSocketHandler.sessions.clear();
-        assertEquals(0, myWebSocketHandler.sessions.size());
+        myWebSocketHandler.afterConnectionClosed(mockSession, null);
+        assertEquals(0, myWebSocketHandler.sessionMap.get("hashValue").size());
     }
 
     @Test
@@ -88,14 +89,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 0
-                        },
-                        "cosmicInsight": false,
-                        "ionianBoots": false
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 0
+                            },
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -115,14 +119,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 55
-                        },
-                        "cosmicInsight": false,
-                        "ionianBoots": false
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 55
+                            },
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -145,14 +152,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 0
-                        },
-                        "cosmicInsight": false,
-                        "ionianBoots": false
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 0
+                            },
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -176,14 +186,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 0
-                        },
-                        "cosmicInsight": true,
-                        "ionianBoots": false
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 0
+                            },
+                            "cosmicInsight": true,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -208,14 +221,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 0
-                        },
-                        "cosmicInsight": false,
-                        "ionianBoots": true
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 0
+                            },
+                            "cosmicInsight": false,
+                            "ionianBoots": true
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -241,14 +257,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 44
-                        },
-                        "cosmicInsight": false,
-                        "ionianBoots": false
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 44
+                            },
+                            "cosmicInsight": false,
+                            "ionianBoots": false
+                        }
                     }
                 """)
                         .contentType("application/json")
@@ -273,14 +292,17 @@ public class MyControllerTest {
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
                     {
-                        "name": "jg",
-                        "flash": {
-                            "type":"flash",
-                            "spellCoolTime": 300,
-                            "coolTime": 44
-                        },
-                        "cosmicInsight": true,
-                        "ionianBoots": true
+                        "hash": "hashValue",
+                        "data": {
+                            "name": "jg",
+                            "flash": {
+                                "type":"flash",
+                                "spellCoolTime": 300,
+                                "coolTime": 44
+                            },
+                            "cosmicInsight": true,
+                            "ionianBoots": true
+                        }
                     }
                 """)
                         .contentType("application/json")
