@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.server.Liner;
 import org.example.server.MyController;
+import org.example.server.MyWebSocketHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.socket.TextMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -37,8 +39,9 @@ public class LinerTest {
 
     @BeforeEach
     public void setUp(){
+        MyWebSocketHandler.getInstance().handleTextMessage(null, new TextMessage("hashValue"));
         Mockito.reset(myController);
-        serverLinerList = myController.getLinerList();
+        serverLinerList = MyWebSocketHandler.linerListMap.get("hashValue");
     }
 
     @Test
@@ -69,9 +72,9 @@ public class LinerTest {
     @Test
     @DirtiesContext
     public void testJsonToLinerListWithCoolTime() throws JsonProcessingException {
-        myController.getLinerList().get("jg").getFlash().off();
-        myController.getLinerList().get("mid").getFlash().off();
-        myController.getLinerList().get("sup").getFlash().setCoolTime(100);
+        serverLinerList.get("jg").getFlash().off();
+        serverLinerList.get("mid").getFlash().off();
+        serverLinerList.get("sup").getFlash().setCoolTime(100);
 
         String json = """
                   [{"name":"top","flash":{"type":"flash", "coolTime":0}},
@@ -82,15 +85,15 @@ public class LinerTest {
 
         List<Liner> liners = mapper.readValue(json, new TypeReference<List<Liner>>() {});
         for(Liner liner : liners){
-            assertEquals(liner, myController.getLinerList().get(liner.getName()));
+            assertEquals(liner, serverLinerList.get(liner.getName()));
         }
     }
 
     @Test
     @DirtiesContext
     public void testJsonToLinerListWithIonianBootsAndCosmicInsights() throws JsonProcessingException {
-        myController.getLinerList().get("jg").setIonianBoots(true);
-        myController.getLinerList().get("mid").setCosmicInsight(true);;
+        serverLinerList.get("jg").setIonianBoots(true);
+        serverLinerList.get("mid").setCosmicInsight(true);;
 
         String json = """
                   [{"name":"top","flash":{"type":"flash", "coolTime":0},"ionianBoots":false,"cosmicInsight":false},
@@ -101,7 +104,7 @@ public class LinerTest {
 
         List<Liner> liners = mapper.readValue(json, new TypeReference<List<Liner>>() {});
         for(Liner liner : liners){
-            assertEquals(liner, myController.getLinerList().get(liner.getName()));
+            assertEquals(liner, serverLinerList.get(liner.getName()));
         }
     }
 }

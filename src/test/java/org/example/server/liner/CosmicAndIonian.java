@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.server.Liner;
 import org.example.server.MyController;
+import org.example.server.MyWebSocketHandler;
 import org.example.server.spell.Flash;
 import org.example.server.spell.Spell;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.socket.TextMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +40,10 @@ public class CosmicAndIonian {
 
     @BeforeEach
     public void setUp(){
+        MyWebSocketHandler.getInstance().handleTextMessage(null, new TextMessage("hashValue"));
+
         Mockito.reset(myController);
-        serverLinerList = myController.getLinerList();
+        serverLinerList = MyWebSocketHandler.linerListMap.get("hashValue");
     }
 
     @Test

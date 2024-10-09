@@ -52,7 +52,8 @@ public class MyControllerTest {
         tempLinerList.put("sup", new Liner("sup"));
 
         Mockito.reset(myController);
-        serverLinerList = myController.getLinerList();
+
+
 
         mockSession = Mockito.spy(WebSocketSession.class);
         when(mockSession.isOpen()).thenReturn(true);
@@ -60,6 +61,8 @@ public class MyControllerTest {
         myWebSocketHandler.handleTextMessage(mockSession, new TextMessage("hashValue"));
         assertEquals("hashValue", myWebSocketHandler.sessionHashValue.get(mockSession));
         assertEquals(1, myWebSocketHandler.sessionMap.get("hashValue").size());
+
+        serverLinerList = MyWebSocketHandler.linerListMap.get("hashValue");
     }
 
     @AfterEach
@@ -84,7 +87,7 @@ public class MyControllerTest {
         Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -137,7 +140,7 @@ public class MyControllerTest {
         verify(myController, times(1)).sendLinerStatus(any(String.class));
 
         verify(mockSession, times(1)).sendMessage(any(TextMessage.class));
-        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
+        assertFalse(serverLinerList.get("jg").getFlash().isOn());
     }
 
 
@@ -147,7 +150,7 @@ public class MyControllerTest {
         Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -168,11 +171,11 @@ public class MyControllerTest {
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertTrue(serverLinerList.get("jg").getFlash().isOn());
+        assertEquals(tempLinerList, serverLinerList);
 
         Liner resultLiner = new Liner("jg");
-        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+        assertEquals(resultLiner, serverLinerList.get("jg"));
     }
 
     @Test
@@ -181,7 +184,7 @@ public class MyControllerTest {
         Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -202,12 +205,12 @@ public class MyControllerTest {
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
+        assertTrue(serverLinerList.get("jg").getFlash().isOn());
 
         Liner resultLiner = new Liner("jg");
-        assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
+        assertNotEquals(resultLiner, serverLinerList.get("jg"));
         resultLiner.setCosmicInsight(true);
-        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+        assertEquals(resultLiner, serverLinerList.get("jg"));
     }
 
     @Test
@@ -216,7 +219,7 @@ public class MyControllerTest {
         Spell mockServerLinerFlash = Mockito.spy(serverLinerList.get("jg").getFlash());
         serverLinerList.get("jg").setFlash(mockServerLinerFlash);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -237,22 +240,22 @@ public class MyControllerTest {
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertTrue(myController.getLinerList().get("jg").getFlash().isOn());
+        assertTrue(serverLinerList.get("jg").getFlash().isOn());
 
-        assertFalse(myController.getLinerList().get("jg").isCosmicInsight());
-        assertTrue(myController.getLinerList().get("jg").isIonianBoots());
+        assertFalse(serverLinerList.get("jg").isCosmicInsight());
+        assertTrue(serverLinerList.get("jg").isIonianBoots());
 
         Liner resultLiner = new Liner("jg");
-        assertNotEquals(resultLiner, myController.getLinerList().get("jg"));
+        assertNotEquals(resultLiner, serverLinerList.get("jg"));
         resultLiner.setIonianBoots(true);
-        assertEquals(resultLiner, myController.getLinerList().get("jg"));
+        assertEquals(resultLiner, serverLinerList.get("jg"));
     }
     @Test
     @DirtiesContext
     void testSendLinerStatusFlashOff() throws Exception {
         tempLinerList.get("jg").getFlash().setCoolTime(44);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -275,8 +278,8 @@ public class MyControllerTest {
 
         verify(myController, times(1)).sendLinerStatus(any(String.class));
 
-        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertFalse(serverLinerList.get("jg").getFlash().isOn());
+        assertEquals(tempLinerList, serverLinerList);
     }
 
 
@@ -287,7 +290,7 @@ public class MyControllerTest {
         tempLinerList.get("jg").setCosmicInsight(true);
         tempLinerList.get("jg").setIonianBoots(true);
 
-        assertEquals(true, myController.getLinerList().get("jg").getFlash().isOn());
+        assertEquals(true, serverLinerList.get("jg").getFlash().isOn());
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/sendLinerStatus")
                         .content("""
@@ -308,9 +311,9 @@ public class MyControllerTest {
                         .contentType("application/json")
         ).andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertFalse(myController.getLinerList().get("jg").getFlash().isOn());
-        assertTrue(myController.getLinerList().get("jg").isCosmicInsight());
-        assertTrue(myController.getLinerList().get("jg").isIonianBoots());
-        assertEquals(tempLinerList, myController.getLinerList());
+        assertFalse(serverLinerList.get("jg").getFlash().isOn());
+        assertTrue(serverLinerList.get("jg").isCosmicInsight());
+        assertTrue(serverLinerList.get("jg").isIonianBoots());
+        assertEquals(tempLinerList, serverLinerList);
     }
 }

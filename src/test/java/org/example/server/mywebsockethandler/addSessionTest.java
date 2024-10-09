@@ -1,29 +1,17 @@
-package org.example.server;
+package org.example.server.mywebsockethandler;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.example.server.MyWebSocketHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class MyWebSocketHandlerTest {
+public class addSessionTest {
     MyWebSocketHandler myHandler = MyWebSocketHandler.getInstance();
     WebSocketSession mockSession;
-
-    @Test
-    @DirtiesContext
-    public void afterConnectionClosedWithNullSession() {
-        assertThrows(NullPointerException.class, () -> {
-            myHandler.afterConnectionClosed(null, null);
-        });
-    }
 
     @Test
     @DirtiesContext

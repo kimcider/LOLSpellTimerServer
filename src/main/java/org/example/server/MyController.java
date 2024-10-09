@@ -19,25 +19,15 @@ import java.util.Map;
 @RequestMapping("/")
 @Getter
 public class MyController {
-    private HashMap<String, Liner> linerList = new HashMap<String, Liner>();
     private ObjectMapper mapper = new ObjectMapper();
 
     public String getJsonLineList(Map<String, Liner> list) throws JsonProcessingException {
         return mapper.writeValueAsString(list.values().stream().toList());
     }
-
-    public MyController() {
-        linerList.put("top", new Liner("top"));
-        linerList.put("jg", new Liner("jg"));
-        linerList.put("mid", new Liner("mid"));
-        linerList.put("bot", new Liner("bot"));
-        linerList.put("sup", new Liner("sup"));
-    }
-
-
-
+    
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
+        System.out.println(json);
         try {
             JsonNode rootNode = mapper.readTree(json);
 
@@ -46,6 +36,8 @@ public class MyController {
             String dataJson = mapper.writeValueAsString(dataNode);
 
             Liner clientLiner = mapper.readValue(dataJson, Liner.class);
+
+            HashMap<String, Liner> linerList = MyWebSocketHandler.linerListMap.get(hash);
             Liner serverLiner = linerList.get(clientLiner.getName());
 
             serverLiner.setLiner(clientLiner);
