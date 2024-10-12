@@ -21,10 +21,6 @@ import java.util.Map;
 public class MyController {
     private ObjectMapper mapper = new ObjectMapper();
 
-    public String getJsonLineList(Map<String, Liner> list) throws JsonProcessingException {
-        return mapper.writeValueAsString(list.values().stream().toList());
-    }
-
     @PostMapping("/sendLinerStatus")
     public void sendLinerStatus(@RequestBody String json) {
         //System.out.println(json);
@@ -33,19 +29,15 @@ public class MyController {
 
             String hash = rootNode.get("hash").asText();
             JsonNode dataNode = rootNode.get("data");
+            if (dataNode == null) {
+                return;
+            }
             String dataJson = mapper.writeValueAsString(dataNode);
-
-            Liner clientLiner = mapper.readValue(dataJson, Liner.class);
-
-            HashMap<String, Liner> linerList = MyWebSocketHandler.linerListMap.get(hash);
-            Liner serverLiner = linerList.get(clientLiner.getName());
-
-            serverLiner.setLiner(clientLiner);
 
             MyWebSocketHandler myWebSocketHandler = MyWebSocketHandler.getInstance();
             myWebSocketHandler.sessionMap.get(hash).stream().filter(WebSocketSession::isOpen).forEach(session -> {
                 try {
-                    session.sendMessage(new TextMessage(getJsonLineList(linerList)));
+                    session.sendMessage(new TextMessage(dataJson));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

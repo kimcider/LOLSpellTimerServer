@@ -12,7 +12,6 @@ import java.util.Set;
 
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
-    public static HashMap<String, HashMap<String, Liner>> linerListMap = new HashMap<>();
     private static MyWebSocketHandler myWebSocketHandler = new MyWebSocketHandler();
 
     private MyWebSocketHandler(){
@@ -40,10 +39,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             sessionMap.put(hashValue, new HashSet<>());
         }
         sessionMap.get(hashValue).add(session);
-
-        if(!linerListMap.containsKey(hashValue)){
-            linerListMap.put(hashValue, getLinerList());
-        }
     }
 
     @Override
@@ -51,20 +46,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         String hashValue = sessionHashValue.get(session.hashCode());
         sessionMap.get(hashValue).remove(session);
 
-        if(sessionMap.get(hashValue).isEmpty()){
-            linerListMap.remove(hashValue);
-        }
-
         sessionHashValue.remove(session.hashCode());
-    }
-
-    public HashMap<String, Liner> getLinerList(){
-        HashMap<String, Liner> linerList = new HashMap<>();
-        linerList.put("top", new Liner("top"));
-        linerList.put("jg", new Liner("jg"));
-        linerList.put("mid", new Liner("mid"));
-        linerList.put("bot", new Liner("bot"));
-        linerList.put("sup", new Liner("sup"));
-        return linerList;
     }
 }
