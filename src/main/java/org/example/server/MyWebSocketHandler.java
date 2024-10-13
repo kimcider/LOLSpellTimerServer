@@ -34,10 +34,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-
     }
-
-    WebSocketSession unInitializedSession;
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -46,7 +43,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
             String method = rootNode.get("method").asText();
             String hash = rootNode.get("hash").asText();
-            System.out.println("method: " + method + "hash: " + hash);
             if("open".equals(method)){
                 sessionHashValue.put(session.hashCode(), hash);
 
@@ -60,9 +56,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                     uninitializedSessionMap.get(hash).add(session);
                 }
             }else if("getLinerStatus".equals(method)){
-                sessionMap.get(hash).stream().filter(WebSocketSession::isOpen).forEach(sses -> {
+                sessionMap.get(hash).stream().filter(WebSocketSession::isOpen).forEach(sess -> {
                     try {
-                        sses.sendMessage(new TextMessage(MyController.wrapMethod("getLinerStatus", "")));
+                        sess.sendMessage(new TextMessage(MyController.wrapMethod("getLinerStatus", "")));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -97,6 +93,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String hashValue = sessionHashValue.get(session.hashCode());
         sessionMap.get(hashValue).remove(session);
+        if(uninitializedSessionMap.containsKey(hashValue)){
+            if(uninitializedSessionMap.get(hashValue).contains(session)){
+                uninitializedSessionMap.get(hashValue).remove(session);
+            }
+        }
 
         sessionHashValue.remove(session.hashCode());
     }

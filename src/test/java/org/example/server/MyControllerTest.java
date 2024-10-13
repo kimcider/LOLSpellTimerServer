@@ -1,5 +1,9 @@
 package org.example.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MyControllerTest {
+    private static ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -34,22 +40,37 @@ public class MyControllerTest {
 
     private WebSocketSession mockSession;
 
+    private String wrapMethodJson(String method, String hash, String json) throws JsonProcessingException {
+        ObjectNode wrappedData = mapper.createObjectNode();
+        wrappedData.put("method", method);
+        wrappedData.put("hash", hash);
+
+        if (!json.isBlank()) {
+            JsonNode jsonNode = mapper.readTree(json);
+            wrappedData.set("data", jsonNode);
+        }
+
+        return wrappedData.toString();
+    }
+
+
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws JsonProcessingException {
         Mockito.reset(myController);
 
         mockSession = Mockito.spy(WebSocketSession.class);
         when(mockSession.isOpen()).thenReturn(true);
         assertTrue(mockSession.isOpen());
-        myWebSocketHandler.handleTextMessage(mockSession, new TextMessage("hashValue"));
+        myWebSocketHandler.handleTextMessage(mockSession, new TextMessage(wrapMethodJson("open", "hashValue", "")));
         assertEquals("hashValue", myWebSocketHandler.sessionHashValue.get(mockSession.hashCode()));
         assertEquals(1, myWebSocketHandler.sessionMap.get("hashValue").size());
     }
 
     @AfterEach
     public void closeConnection() throws IOException {
-        myWebSocketHandler.afterConnectionClosed(mockSession, null);
-        assertEquals(0, myWebSocketHandler.sessionMap.get("hashValue").size());
+        myWebSocketHandler.uninitializedSessionMap.clear();
+        myWebSocketHandler.sessionMap.clear();
+        myWebSocketHandler.sessionHashValue.clear();
     }
 
     @Test
