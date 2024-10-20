@@ -34,10 +34,12 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println("Connected: " + session.hashCode());
     }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
+        System.out.println("Received: " + message.getPayload());
         try{
             JsonNode rootNode = mapper.readTree(message.getPayload());
 
@@ -91,8 +93,14 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println("Disconnected: " + session.hashCode());
         String hashValue = sessionHashValue.get(session.hashCode());
         sessionMap.get(hashValue).remove(session);
+
+        if(sessionMap.get(hashValue).size() == 0){
+            sessionMap.remove(hashValue);
+        }
+
         if(uninitializedSessionMap.containsKey(hashValue)){
             if(uninitializedSessionMap.get(hashValue).contains(session)){
                 uninitializedSessionMap.get(hashValue).remove(session);
